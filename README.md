@@ -21,6 +21,26 @@ Please check the project webpage (http://deepcompletion.cs.princeton.edu/) for m
 3. Compile `depth2depth` in [`./gaps/`](./gaps).
 4. Run `demo_realsense.m` in [`./matlab/`](./matlab).
 
+## Details of Pipeline
+
+Our method completes a depth image using information extracted from an aligned color image. We first estimate surface normal and occlusion boundary from the color image. The surface normal tells relations of depth between nearby pixels, and occlusion boundary indicates depth discontinuity. A global optimization integrates these two information with the observed depth to generate a complete depth image. Implementations for major steps are as the following:
+1. Estimating Surface Normal. We train a fully convolutional neural network to estimate surface normal. Training and testing codes can be found in `./torch/main_train_[matterport/scannet].lua` and `./torch/main_test_[matterport/scannet].lua`. The estimated surface normal is saved as a H x W x 3 matrix in HDF5 format.
+2. Detecting Boundary. We train a fully convolutional neural network to estimate boundaries. Training and testing codes can be found in `./torch/main_train_bound.lua` and `./torch/main_test_bound_[matterport/scannet].lua`. This network performs a per-pixel classification with 3 labels: 0 for no boundary, 1 for occlusion boundary (depth discontinuity), and 2 for crease (normal discontinuity). The result is a H x W x 3 matrix containing the probability of each pixel belonging to each label saved in png format.
+3. Getting Occlusion Weight. The surface normal constraint for pixels on occlusion boundary should be weaken. Run `./matlab/GenerateOcclusionWeight.m` to generate the occlusion based weight map for optimization.
+4. Global Optimization. We use a C++ implementation for a global optimization taking sensor depth, estimated normal, and the occlusion based weight map to generate complete depth. Please check [`./gaps/`](./gaps) for the `depth2depth` tool. An example command of using `depth2depth` is like:
+```
+depth2depth input_depth.png output_depth.png -xres 320 -yres 240 -fx 308 -fy 308 -cx 165 -cy 119 -inertia_weight 1000 -smoothness_weight 0.001 -tangent_weight 1 -input_normals PATH_to_Normal_Est.h5 -input_tangent_weight PATH_to_Occlusion_Weight.png'
+```
+- input_depth.png: The path for the raw depth map from sensor, which is the depth to refine. It should be saved as 4000 x depth in meter in a 16bit PNG.
+- output_depth.png: The path for the result, which is the completed depth. It is also saved as 4000 x depth in meter in a 16bit PNG.
+- xres, fx, cx: The resolution, focal length, and camera center location along horizonal direction. Similar for yres, fy, and cy.
+- inertia_weight: The strength of the penalty on the difference between the input and the output depth map on observed pixels. Set this value higher if you want to maintain the observed depth from `input_depth.png`.
+- smoothness_weight: The strength of the penalty on the difference between the depths of neighboring pixels. Higher smoothness weight will produce soap-film-like result.
+- tangent_weight: The universal strength of the surface normal constraint. Higher tangent weight will force the output to have the same surface normal with the given one.
+- input_normals: The estimated surface normal from Step 1.
+- input_tangent_weight: The pixel-wised strength of the surface normal constraint, which is the occlusion based weight from Step 3. The final weight on the surface normal constraint is the multiplication of the weight map with the tangent_weight.
+
+
 ## Pre-trained Model
 
 We provide pre-trained models on SUNCG-RGBD, Matterport3D, and ScanNet datasets. Please check [`./pre_train_model/`](./pre_train_model) for download links.
@@ -40,7 +60,7 @@ If you are interested in using any part of our data, you must obtain the access 
 We extend codes here: https://github.com/yindaz/surface_normal for occlusion detection and surface normal estimation. Both training and test codes are provided. Please see [`./torch/`](./torch) for more details.
 
 ## Optimization
-We extend gaps (https://github.com/tomfunkhouser/gaps) for global optimization. Please check [`./gaps/`](./gaps) for the optimization tool.
+We extend gaps (https://github.com/tomfunkhouser/gaps) for global optimization. Please check [`./gaps/`](./gaps) for the optimization tool `depth2depth`.
 
 ## Evaluation
 - We use the MATLAB code [`./matlab/evalDepth.m`](./matlab/evalDepth.m) to evaluate the performance of the depth completion. 
