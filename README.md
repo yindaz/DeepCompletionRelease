@@ -29,7 +29,7 @@ Our method completes a depth image using information extracted from an aligned c
 3. Getting Occlusion Weight. The surface normal constraint for pixels on occlusion boundary should be weaken. Run `./matlab/GenerateOcclusionWeight.m` to generate the occlusion based weight map for optimization.
 4. Global Optimization. We use a C++ implementation for a global optimization taking sensor depth, estimated normal, and the occlusion based weight map to generate complete depth. Please check [`./gaps/`](./gaps) for the `depth2depth` tool. An example command of using `depth2depth` is like:
 ```
-depth2depth input_depth.png output_depth.png -xres 320 -yres 240 -fx 308 -fy 308 -cx 165 -cy 119 -inertia_weight 1000 -smoothness_weight 0.001 -tangent_weight 1 -input_normals PATH_to_Normal_Est.h5 -input_tangent_weight PATH_to_Occlusion_Weight.png'
+depth2depth input_depth.png output_depth.png -xres 320 -yres 240 -fx 308 -fy 308 -cx 165 -cy 119 -inertia_weight 1000 -smoothness_weight 0.001 -tangent_weight 1 -input_normals PATH_to_Normal_Est.h5 -input_tangent_weight PATH_to_Occlusion_Weight.png
 ```
 - input_depth.png: The path for the raw depth map from sensor, which is the depth to refine. It should be saved as 4000 x depth in meter in a 16bit PNG.
 - output_depth.png: The path for the result, which is the completed depth. It is also saved as 4000 x depth in meter in a 16bit PNG.
