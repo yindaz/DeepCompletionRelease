@@ -21,6 +21,7 @@ GenerateOcclusionWeight('../torch/result/bound_realsense_test_bound/', '../torch
 composeDepth('../data/', '../torch/result/normal_scannet_realsense_test', '../torch/result/bound_realsense_weight', 'realsense', '../results/realsense/', [1000, 0.001, 1]);
 
 % Visualize results
+input = imread('../data/realsense/030_depth_open.png');
 output = imread('../results/realsense/realsense_030_1.png');
 colormap = jet(double(max([input(:);output(:)])));
 figure;
