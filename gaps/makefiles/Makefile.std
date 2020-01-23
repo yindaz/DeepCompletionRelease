@@ -59,11 +59,11 @@ LIB_DIR=../../lib/$(ARCH)
 .SUFFIXES: .cpp .C .c .o
 
 .cpp.o: 
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) $(INC) -c $<
 
 .C.o: 
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) $(INC) -c $<
 
 .c.o: 
-	gcc $(CFLAGS) -c $<
+	gcc $(CFLAGS) $(INC) -c $<
 

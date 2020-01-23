@@ -3,3 +3,9 @@
 *.DS*
 *.mat
 ._*
+results
+*.swp
+gaps/pkgs
+torch/result
+gaps/lib/x86_64/
+gaps/bin
