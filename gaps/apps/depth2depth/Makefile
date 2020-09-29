@@ -20,7 +20,9 @@ NAME=depth2depth
 # Without Ceres
 #
 
-USER_LIBS=-lhdf5
+USER_LIBS=-lhdf5_serial
+INC=-I/usr/include/hdf5/serial
+#LIB=-L/
 
 USER_CFLAGS=-DRN_USE_CSPARSE 
 

@@ -304,8 +304,8 @@ ReadInputs(void)
   // Read duv images
   if (input_duv_filename) {
     ReadH5(input_duv_filename, input_duv_images, 8, print_verbose);
-    if (input_duv_images[0]->XResolution() != xres) RNAbort("Mismatching resolution in %s", input_duv_filename);
-    if (input_duv_images[0]->YResolution() != yres) RNAbort("Mismatching resolution in %s", input_duv_filename);
+    if (input_duv_images[0]->XResolution() != xres) RNAbort("Mismatching resolution %d != %d in %s", input_duv_images[0]->XResolution(), xres, input_duv_filename);
+    if (input_duv_images[0]->YResolution() != yres) RNAbort("Mismatching resolution %d != %d in %s", input_duv_images[0]->YResolution(), yres, input_duv_filename);
     for (int i = 0; i < 8; i++)  input_duv_images[i]->Threshold(-20, R2_GRID_UNKNOWN_VALUE, R2_GRID_KEEP_VALUE);
     for (int i = 0; i < 8; i++)  input_duv_images[i]->Threshold(20, R2_GRID_KEEP_VALUE, R2_GRID_UNKNOWN_VALUE);
     char buffer[1024];
@@ -320,7 +320,7 @@ ReadInputs(void)
   // Read normal images
   if (input_normals_filename) {
     ReadH5(input_normals_filename, input_normals_images, 3, print_verbose);
-    if (input_normals_images[0]->XResolution() != xres) RNAbort("Mismatching resolution in %s", input_normals_filename);
+    if (input_normals_images[0]->XResolution() != xres) RNAbort("Mismatching resolution %d != %d in %s", input_normals_images[0]->XResolution(), xres, input_normals_filename);
     if (input_normals_images[0]->YResolution() != yres) RNAbort("Mismatching resolution in %s", input_normals_filename);
     R2Grid *swap = input_normals_images[1]; input_normals_images[1] = input_normals_images[2]; input_normals_images[2] = swap;
     input_normals_images[2]->Negate();
@@ -335,7 +335,7 @@ ReadInputs(void)
   // Read du image
   if (input_du_filename && !input_duv_images[0]) {
     input_duv_images[0] = ReadImage(input_du_filename, png_depth_scale, 32768, print_verbose);
-    if (input_duv_images[0]->XResolution() != xres) RNAbort("Mismatching resolution in %s", input_du_filename);
+    if (input_duv_images[0]->XResolution() != xres) RNAbort("Mismatching resolution %d != %d in %s", input_duv_images[0]->XResolution(), xres, input_du_filename);
     if (input_duv_images[0]->YResolution() != yres) RNAbort("Mismatching resolution in %s", input_du_filename);
     count++;
   }
@@ -343,7 +343,7 @@ ReadInputs(void)
   // Read dv image
   if (input_dv_filename && !input_duv_images[1]) {
     input_duv_images[1] = ReadImage(input_dv_filename, png_depth_scale, 32768, print_verbose);
-    if (input_duv_images[1]->XResolution() != xres) RNAbort("Mismatching resolution in %s", input_dv_filename);
+    if (input_duv_images[1]->XResolution() != xres) RNAbort("Mismatching resolution %d != %d in %s", input_duv_images[1]->XResolution(), xres, input_dv_filename);
     if (input_duv_images[1]->YResolution() != yres) RNAbort("Mismatching resolution in %s", input_dv_filename);
     count++;
   }
